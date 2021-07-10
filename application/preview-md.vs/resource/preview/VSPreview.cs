@@ -7,49 +7,39 @@ using System.Windows.Forms;
 
 namespace resource.preview
 {
-    internal class VSPreview : cartridge.AnyPreview
+    internal class VSPreview : extension.AnyPreview
     {
-        protected override void _Execute(atom.Trace context, string url, int level)
+        protected override void _Execute(atom.Trace context, int level, string url, string file)
         {
-            if (File.Exists(url))
-            {
-                var a_Name = GetUrlProxy(url, ".png");
-                {
-                    context.
-                        SetProgress(0, true, "").
-                        SetUrlAlignment(NAME.ALIGNMENT.TOP).
-                        SetUrlProxy(a_Name).
-                        SendPreview(NAME.TYPE.INFO, url);
-                }
-                {
-                    context.
-                        SetState(NAME.STATE.HEADER).
-                        Send(NAME.SOURCE.PREVIEW, NAME.TYPE.FOLDER, level, "[[Info]]");
-                    {
-                        context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, level + 1, "[[File Name]]", url);
-                        context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, level + 1, "[[File Size]]", (new System.IO.FileInfo(url)).Length.ToString());
-                        context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, level + 1, "[[Raw Format]]", "Markdown");
-                    }
-                }
-                {
-                    var a_Context = new Thread(__BrowserThread);
-                    {
-                        a_Context.SetApartmentState(ApartmentState.STA);
-                        a_Context.Start(new Tuple<string, string, int>(url, a_Name, level));
-                    }
-                }
-            }
-            else
+            var a_Name = GetUrlPreview(file, ".png");
             {
                 context.
-                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.ERROR, level, "[[File not found]]").
-                    SendPreview(NAME.TYPE.ERROR, url);
+                    SetAlignment(NAME.ALIGNMENT.TOP).
+                    SetFontState(NAME.FONT_STATE.BLINK).
+                    SetProgress(NAME.PROGRESS.INFINITE).
+                    SetUrlPreview(a_Name).
+                    SendPreview(NAME.TYPE.INFO, url);
+            }
+            {
+                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.HEADER, level, "[[[Info]]]");
+                {
+                    context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[File Name]]]", url);
+                    context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[File Size]]]", (new FileInfo(file)).Length.ToString());
+                    context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[Raw Format]]]", "Markdown");
+                }
+            }
+            {
+                var a_Context = new Thread(__BrowserThread);
+                {
+                    a_Context.SetApartmentState(ApartmentState.STA);
+                    a_Context.Start(new Tuple<string, string, string, int>(url, file, a_Name, level));
+                }
             }
         }
 
-        private static string __GetUrl(object context)
+        private static string __GetUrl(object data)
         {
-            var a_Context = context as Tuple<string, string, int>;
+            var a_Context = data as Tuple<string, string, string, int>;
             if (a_Context != null)
             {
                 return a_Context.Item1?.ToString();
@@ -57,9 +47,9 @@ namespace resource.preview
             return null;
         }
 
-        private static string __GetUrlProxy(object context)
+        private static string __GetUrlLocal(object data)
         {
-            var a_Context = context as Tuple<string, string, int>;
+            var a_Context = data as Tuple<string, string, string, int>;
             if (a_Context != null)
             {
                 return a_Context.Item2?.ToString();
@@ -67,17 +57,27 @@ namespace resource.preview
             return null;
         }
 
-        private static int __GetLevel(object context)
+        private static string __GetUrlProxy(object data)
         {
-            var a_Context = context as Tuple<string, string, int>;
+            var a_Context = data as Tuple<string, string, string, int>;
             if (a_Context != null)
             {
-                return a_Context.Item3;
+                return a_Context.Item3?.ToString();
+            }
+            return null;
+        }
+
+        private static int __GetLevel(object data)
+        {
+            var a_Context = data as Tuple<string, string, string, int>;
+            if (a_Context != null)
+            {
+                return a_Context.Item4;
             }
             return 0;
         }
 
-        private static string __GetHtml(object context)
+        private static string __GetHtml(object data)
         {
             var a_Context = new MarkdownPipelineBuilder().
                 UseAdvancedExtensions().
@@ -86,7 +86,7 @@ namespace resource.preview
                 UseSmartyPants().
                 Build();
             {
-                return Markdown.ToHtml(File.ReadAllText(__GetUrl(context)), a_Context);
+                return Markdown.ToHtml(File.ReadAllText(__GetUrlLocal(data)), a_Context);
             }
         }
 
@@ -104,83 +104,85 @@ namespace resource.preview
                     a_Context.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(__DocumentCompleted);
                     a_Context.DocumentText = __GetHtml(context);
                 }
+                while (a_Context.Tag != null)
                 {
-                    Application.Run();
+                    Application.DoEvents();
+                    Thread.Sleep(50);
                 }
                 {
                     a_Context.Dispose();
+                    GC.Collect();
                 }
             }
             catch (Exception ex)
             {
                 atom.Trace.GetInstance().
-                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.ERROR, __GetLevel(context), ex.Message).
-                    SetUrlAlignment(NAME.ALIGNMENT.TOP).
-                    SetUrlProxy(__GetUrlProxy(context)).
-                    SendPreview(NAME.TYPE.ERROR, __GetUrl(context));
+                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.EXCEPTION, __GetLevel(context), ex.Message).
+                    SetAlignment(NAME.ALIGNMENT.TOP).
+                    SetFontState(NAME.FONT_STATE.NONE).
+                    SetUrlPreview(__GetUrlLocal(context)).
+                    SendPreview(NAME.TYPE.EXCEPTION, __GetUrl(context));
             }
         }
 
-        private static void __DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        private static void __DocumentCompleted(object context, WebBrowserDocumentCompletedEventArgs e)
         {
-            var a_Context = (WebBrowser)sender;
-            if (a_Context?.Tag != null)
+            var a_Context = (WebBrowser)context;
+            if (__GetUrl(a_Context?.Tag) != null)
             {
                 var a_Context1 = a_Context.Tag;
                 try
                 {
                     {
-                        a_Context.Tag = null;
+                        a_Context.Tag = true;
+                        a_Context.Width = GetProperty(NAME.PROPERTY.PREVIEW_WIDTH, true);
+                        a_Context.Height = a_Context.Document.Body.ScrollRectangle.Height;
                     }
                     {
-                        var a_Size = a_Context.Document.Body.ScrollRectangle.Width;
+                        var a_Context2 = new Bitmap(a_Context.Width, a_Context.Height);
                         {
-                            a_Size = Math.Max(a_Size, GetProperty(NAME.PROPERTY.PREVIEW_WIDTH));
+                            a_Context.DrawToBitmap(a_Context2, new Rectangle(0, 0, a_Context2.Width, a_Context2.Height));
                         }
                         {
-                            a_Context.Width = a_Size;
-                            a_Context.Height = a_Context.Document.Body.ScrollRectangle.Height;
-                        }
-                        {
-                            var a_Context2 = new Bitmap(a_Size, a_Context.Document.Body.ScrollRectangle.Height);
-                            {
-                                a_Context.DrawToBitmap(a_Context2, new Rectangle(0, 0, a_Context2.Width, a_Context2.Height));
-                            }
-                            {
-                                a_Context2.Save(__GetUrlProxy(a_Context1), System.Drawing.Imaging.ImageFormat.Png);
-                            }
+                            a_Context2.Save(__GetUrlProxy(a_Context1), System.Drawing.Imaging.ImageFormat.Png);
                         }
                     }
                     {
-                        Application.ExitThread();
-                    }
-                    {
-                        var a_Size = GetProperty(NAME.PROPERTY.PREVIEW_MEDIA_SIZE);
+                        var a_Size = (a_Context.Height + CONSTANT.OUTPUT_PREVIEW_ITEM_HEIGHT) / (CONSTANT.OUTPUT_PREVIEW_ITEM_HEIGHT + 1);
                         {
-                            a_Size = Math.Min(a_Size, a_Context.Document.Body.ScrollRectangle.Height / CONSTANT.OUTPUT_PREVIEW_ITEM_HEIGHT);
                             a_Size = Math.Max(a_Size, CONSTANT.OUTPUT_PREVIEW_MIN_SIZE);
                         }
                         for (var i = 0; i < a_Size; i++)
                         {
-                            atom.Trace.GetInstance().Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PREVIEW, __GetLevel(a_Context1));
+                            atom.Trace.GetInstance().
+                                Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PREVIEW, __GetLevel(a_Context1));
                         }
                     }
                     {
                         atom.Trace.GetInstance().
-                            SetState(NAME.STATE.FOOTER).
-                            Send(NAME.SOURCE.PREVIEW, NAME.TYPE.FOLDER, __GetLevel(a_Context1), "[[Size]]: " + (new FileInfo(__GetUrl(a_Context1))).Length.ToString()).
-                            SetUrlAlignment(NAME.ALIGNMENT.TOP).
-                            SetUrlProxy(__GetUrlProxy(a_Context1)).
+                            Send(NAME.SOURCE.PREVIEW, NAME.TYPE.FOOTER, __GetLevel(a_Context1), "[[[Size]]]: " + (new FileInfo(__GetUrlLocal(a_Context1))).Length.ToString()).
+                            SetAlignment(NAME.ALIGNMENT.TOP).
+                            SetFontState(NAME.FONT_STATE.NONE).
+                            SetProgress(100).
+                            SetUrlPreview(__GetUrlProxy(a_Context1)).
                             SendPreview(NAME.TYPE.INFO, __GetUrl(a_Context1));
+                    }
+                    {
+                        a_Context.Tag = null;
                     }
                 }
                 catch (Exception ex)
                 {
-                    atom.Trace.GetInstance().
-                        Send(NAME.SOURCE.PREVIEW, NAME.TYPE.ERROR, __GetLevel(a_Context1), ex.Message).
-                        SetUrlAlignment(NAME.ALIGNMENT.TOP).
-                        SetUrlProxy(__GetUrlProxy(a_Context1)).
-                        SendPreview(NAME.TYPE.ERROR, __GetUrl(a_Context1));
+                    {
+                        a_Context.Tag = null;
+                    }
+                    {
+                        atom.Trace.GetInstance().
+                            Send(NAME.SOURCE.PREVIEW, NAME.TYPE.EXCEPTION, __GetLevel(a_Context1), ex.Message).
+                            SetFontState(NAME.FONT_STATE.NONE).
+                            SetProgress(100).
+                            SendPreview(NAME.TYPE.EXCEPTION, __GetUrl(a_Context1));
+                    }
                 }
             }
         }
