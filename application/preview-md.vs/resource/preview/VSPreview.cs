@@ -11,7 +11,7 @@ namespace resource.preview
     {
         protected override void _Execute(atom.Trace context, int level, string url, string file)
         {
-            var a_Name = GetUrlPreview(file, ".png");
+            var a_Name = atom.Trace.GetUrlPreview(file, ".png");
             {
                 context.
                     SetAlignment(NAME.ALIGNMENT.TOP).
@@ -148,9 +148,9 @@ namespace resource.preview
                         }
                     }
                     {
-                        var a_Size = (a_Context.Height + CONSTANT.OUTPUT_PREVIEW_ITEM_HEIGHT) / (CONSTANT.OUTPUT_PREVIEW_ITEM_HEIGHT + 1);
+                        var a_Size = (a_Context.Height + CONSTANT.OUTPUT.PREVIEW_ITEM_HEIGHT) / (CONSTANT.OUTPUT.PREVIEW_ITEM_HEIGHT + 1);
                         {
-                            a_Size = Math.Max(a_Size, CONSTANT.OUTPUT_PREVIEW_MIN_SIZE);
+                            a_Size = Math.Max(a_Size, CONSTANT.OUTPUT.PREVIEW_MIN_SIZE);
                         }
                         for (var i = 0; i < a_Size; i++)
                         {
