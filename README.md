@@ -8,7 +8,7 @@
 
 ---
 
-### Now you can look inside [MD](https://en.wikipedia.org/wiki/Markdown) file not opening it.
+### Now you can look inside [MARKDOWN](https://en.wikipedia.org/wiki/Markdown) and [MD](https://en.wikipedia.org/wiki/Markdown) file not opening it.
 
 ---
 
