@@ -19,7 +19,7 @@ namespace resource.package
             public const string DESCRIPTION = "Quick preview of MARKDOWN and MD files";
             public const string GUID = "C16BCED5-8A23-4211-84AC-2BB9C4667798";
             public const string NAME = "Preview-MD";
-            public const string VERSION = "1.0.1";
+            public const string VERSION = "1.0.2";
         }
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
