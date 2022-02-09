@@ -8,9 +8,9 @@
 
 ---
 
-[![MetaOutput](https://www.metaoutput.net/_functions/watch?source=GITHUB&size=128x128&project=Preview-MD&url=https://marketplace.visualstudio.com/items?itemName=ViacheslavLozinskyi.Preview-MD)](https://www.metaoutput.net/?utm_source=github.com&utm_medium=referral&utm_campaign=redirect-to-homepage&utm_term=2021-11-21&utm_content=Preview-MD)
+[![MetaOutput](https://www.metaoutput.net/_functions/watch?utm_source=github.com&utm_medium=referral&utm_campaign=view-on-github&utm_term=2022-02-09&utm_content=Preview-MD&source=GITHUB&size=128x128&project=Preview-MD&url=https://marketplace.visualstudio.com/items?itemName=ViacheslavLozinskyi.Preview-MD)](https://www.metaoutput.net/)
 
-### This extension is working only with installed [MetaOutput](https://www.metaoutput.net/?utm_source=github.com&utm_medium=referral&utm_campaign=redirect-to-homepage&utm_term=2021-11-21&utm_content=Preview-MD) extension!
+### This extension is working only with installed [MetaOutput](https://www.metaoutput.net/) extension!
 
 ---
 
