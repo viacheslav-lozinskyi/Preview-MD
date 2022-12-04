@@ -18,14 +18,14 @@ namespace resource.preview
                     SetFontState(NAME.FONT_STATE.BLINK).
                     SetProgress(NAME.PROGRESS.INFINITE).
                     SetUrlPreview(a_Name).
-                    SendPreview(NAME.TYPE.INFO, url);
+                    SendPreview(NAME.EVENT.INFO, url);
             }
             {
-                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.HEADER, level, "[[[Info]]]");
+                context.Send(NAME.SOURCE.PREVIEW, NAME.EVENT.HEADER, level, "[[[Info]]]");
                 {
-                    context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[File Name]]]", url);
-                    context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[File Size]]]", (new FileInfo(file)).Length.ToString());
-                    context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[Raw Format]]]", "Markdown");
+                    context.Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PARAMETER, level + 1, "[[[File Name]]]", url);
+                    context.Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PARAMETER, level + 1, "[[[File Size]]]", (new FileInfo(file)).Length.ToString());
+                    context.Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PARAMETER, level + 1, "[[[Raw Format]]]", "Markdown");
                 }
             }
             {
@@ -117,11 +117,11 @@ namespace resource.preview
             catch (Exception ex)
             {
                 atom.Trace.GetInstance().
-                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.EXCEPTION, __GetLevel(context), ex.Message).
+                    Send(NAME.SOURCE.PREVIEW, NAME.EVENT.EXCEPTION, __GetLevel(context), ex.Message).
                     SetAlignment(NAME.ALIGNMENT.TOP).
                     SetFontState(NAME.FONT_STATE.NONE).
                     SetUrlPreview(__GetUrlLocal(context)).
-                    SendPreview(NAME.TYPE.EXCEPTION, __GetUrl(context));
+                    SendPreview(NAME.EVENT.EXCEPTION, __GetUrl(context));
             }
         }
 
@@ -155,17 +155,17 @@ namespace resource.preview
                         for (var i = 0; i < a_Size; i++)
                         {
                             atom.Trace.GetInstance().
-                                Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PREVIEW, __GetLevel(a_Context1));
+                                Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PREVIEW, __GetLevel(a_Context1));
                         }
                     }
                     {
                         atom.Trace.GetInstance().
-                            Send(NAME.SOURCE.PREVIEW, NAME.TYPE.FOOTER, __GetLevel(a_Context1), "[[[Size]]]: " + (new FileInfo(__GetUrlLocal(a_Context1))).Length.ToString()).
+                            Send(NAME.SOURCE.PREVIEW, NAME.EVENT.FOOTER, __GetLevel(a_Context1), "[[[Size]]]: " + (new FileInfo(__GetUrlLocal(a_Context1))).Length.ToString()).
                             SetAlignment(NAME.ALIGNMENT.TOP).
                             SetFontState(NAME.FONT_STATE.NONE).
                             SetProgress(100).
                             SetUrlPreview(__GetUrlProxy(a_Context1)).
-                            SendPreview(NAME.TYPE.INFO, __GetUrl(a_Context1));
+                            SendPreview(NAME.EVENT.INFO, __GetUrl(a_Context1));
                     }
                     {
                         a_Context.Tag = null;
@@ -178,10 +178,10 @@ namespace resource.preview
                     }
                     {
                         atom.Trace.GetInstance().
-                            Send(NAME.SOURCE.PREVIEW, NAME.TYPE.EXCEPTION, __GetLevel(a_Context1), ex.Message).
+                            Send(NAME.SOURCE.PREVIEW, NAME.EVENT.EXCEPTION, __GetLevel(a_Context1), ex.Message).
                             SetFontState(NAME.FONT_STATE.NONE).
                             SetProgress(100).
-                            SendPreview(NAME.TYPE.EXCEPTION, __GetUrl(a_Context1));
+                            SendPreview(NAME.EVENT.EXCEPTION, __GetUrl(a_Context1));
                     }
                 }
             }
