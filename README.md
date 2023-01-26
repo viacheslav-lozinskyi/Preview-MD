@@ -8,16 +8,19 @@
 
 ---
 
+## Important information:
 [![MetaOutput](https://www.metaoutput.net/_functions/watch?utm_source=github.com&utm_medium=referral&utm_campaign=view-on-github&utm_content=Preview-MD&source=GITHUB&size=128x128&project=Preview-MD&url=https://github.com/viacheslav-lozinskyi/Preview-MD)](https://www.metaoutput.net/)
 
-### This extension is working only with installed [MetaOutput](https://www.metaoutput.net/) extension!
+This extension is working only with installed [MetaOutput](https://www.metaoutput.net/) extension!
 
 ---
 
-### Now you can look inside [MARKDOWN](https://en.wikipedia.org/wiki/Markdown) and [MD](https://en.wikipedia.org/wiki/Markdown) file not opening it.
+## Description:
+Now you can look inside [MARKDOWN](https://en.wikipedia.org/wiki/Markdown) and [MD](https://en.wikipedia.org/wiki/Markdown) file not opening it.
 
 ---
 
+## How it works:
 ![Image](https://viacheslav-lozinskyi.github.io/Preview-MD/resource/video/Presentation1.gif)
 
 ---
