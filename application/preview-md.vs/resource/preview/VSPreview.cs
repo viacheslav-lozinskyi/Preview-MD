@@ -148,14 +148,12 @@ namespace resource.preview
                         }
                     }
                     {
-                        var a_Size = (a_Context.Height + CONSTANT.OUTPUT.PREVIEW_ITEM_HEIGHT + CONSTANT.OUTPUT.PREVIEW_PAGE_INDENT + CONSTANT.OUTPUT.PREVIEW_PAGE_INDENT) / (CONSTANT.OUTPUT.PREVIEW_ITEM_HEIGHT + 1);
-                        {
-                            a_Size = Math.Max(a_Size, CONSTANT.OUTPUT.PREVIEW_MIN_SIZE);
-                        }
-                        for (var i = 0; i < a_Size; i++)
+                        var a_Count = (a_Context.Height + CONSTANT.OUTPUT.PREVIEW_ITEM_HEIGHT + CONSTANT.OUTPUT.PREVIEW_PAGE_INDENT + CONSTANT.OUTPUT.PREVIEW_PAGE_INDENT) / (CONSTANT.OUTPUT.PREVIEW_ITEM_HEIGHT + 1);
                         {
                             atom.Trace.GetInstance().
-                                Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PREVIEW, __GetLevel(a_Context1));
+                                SetControl(NAME.CONTROL.BROWSER).
+                                SetCount(Math.Max(a_Count, CONSTANT.OUTPUT.PREVIEW_MIN_SIZE)).
+                                Send(NAME.SOURCE.PREVIEW, NAME.EVENT.CONTROL, __GetLevel(a_Context1));
                         }
                     }
                     {
