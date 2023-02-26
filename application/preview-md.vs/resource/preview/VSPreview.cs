@@ -135,7 +135,7 @@ namespace resource.preview
                 {
                     {
                         a_Context.Tag = true;
-                        a_Context.Width = GetProperty(NAME.PROPERTY.PREVIEW_WIDTH, true);
+                        a_Context.Width = 1000;// GetProperty(NAME.PROPERTY.PREVIEW_WIDTH, true);
                         a_Context.Height = a_Context.Document.Body.ScrollRectangle.Height;
                     }
                     {
