@@ -11,12 +11,12 @@ namespace resource.preview
     {
         protected override void _Execute(atom.Trace context, int level, string url, string file)
         {
-            var a_Name = atom.Trace.GetUrlPreview(file, ".png");
+            var a_Name = atom.Trace.GetUrlTemp(file, ".png");
             {
                 context.
                     SetAlignment(NAME.ALIGNMENT.TOP).
-                    SetFontState(NAME.FONT_STATE.BLINK).
-                    SetProgress(NAME.PROGRESS.INFINITE).
+                    SetTrace(null, NAME.STATE.TRACE.BLINK).
+                    SetProgress(CONSTANT.PROGRESS.INFINITE).
                     SetUrlPreview(a_Name).
                     SendPreview(NAME.EVENT.INFO, url);
             }
@@ -119,7 +119,7 @@ namespace resource.preview
                 atom.Trace.GetInstance().
                     Send(NAME.SOURCE.PREVIEW, NAME.EVENT.EXCEPTION, __GetLevel(context), ex.Message).
                     SetAlignment(NAME.ALIGNMENT.TOP).
-                    SetFontState(NAME.FONT_STATE.NONE).
+                    SetFont(null, 0, NAME.STATE.FONT.NONE).
                     SetUrlPreview(__GetUrlLocal(context)).
                     SendPreview(NAME.EVENT.EXCEPTION, __GetUrl(context));
             }
@@ -160,7 +160,7 @@ namespace resource.preview
                         atom.Trace.GetInstance().
                             Send(NAME.SOURCE.PREVIEW, NAME.EVENT.FOOTER, __GetLevel(a_Context1), "[[[Size]]]: " + (new FileInfo(__GetUrlLocal(a_Context1))).Length.ToString()).
                             SetAlignment(NAME.ALIGNMENT.TOP).
-                            SetFontState(NAME.FONT_STATE.NONE).
+                            SetFont(null, 0, NAME.STATE.FONT.NONE).
                             SetProgress(100).
                             SetUrlPreview(__GetUrlProxy(a_Context1)).
                             SendPreview(NAME.EVENT.INFO, __GetUrl(a_Context1));
@@ -177,7 +177,7 @@ namespace resource.preview
                     {
                         atom.Trace.GetInstance().
                             Send(NAME.SOURCE.PREVIEW, NAME.EVENT.EXCEPTION, __GetLevel(a_Context1), ex.Message).
-                            SetFontState(NAME.FONT_STATE.NONE).
+                            SetFont(null, 0, NAME.STATE.FONT.NONE).
                             SetProgress(100).
                             SendPreview(NAME.EVENT.EXCEPTION, __GetUrl(a_Context1));
                     }
